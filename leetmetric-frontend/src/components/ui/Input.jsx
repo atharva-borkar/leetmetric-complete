@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { Search } from 'lucide-react';
 
 const Input = forwardRef(({
   label,
