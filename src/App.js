@@ -1,24 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import { AppProvider } from './context/AppContext';
+import Navbar from './components/common/Navbar';
+import Footer from './components/common/Footer';
+import Home from './pages/Home';
+import Profile from './pages/Profile';
+import Compare from './pages/Compare';
+import Analytics from './pages/Analytics';
+import Leaderboard from './pages/Leaderboard';
+import About from './pages/About';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppProvider>
+      <Router>
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-cyan-50">
+          <Navbar />
+          <main className="pt-16 min-h-screen">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/profile/:username" element={<Profile />} />
+              <Route path="/compare" element={<Compare />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/leaderboard" element={<Leaderboard />} />
+              <Route path="/about" element={<About />} />
+            </Routes>
+          </main>
+          <Footer />
+          <Toaster position="top-right" />
+        </div>
+      </Router>
+    </AppProvider>
   );
 }
 
