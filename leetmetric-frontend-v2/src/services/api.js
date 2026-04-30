@@ -1,4 +1,5 @@
-const API_BASE_URL = '/api'; // Proxied to localhost:3001 in dev
+// Use the environment variable for production, or fallback to local proxy
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 export const ApiService = {
   /**
