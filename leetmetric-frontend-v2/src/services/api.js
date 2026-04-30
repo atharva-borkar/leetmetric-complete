@@ -105,6 +105,9 @@ export const ApiService = {
   /**
    * Get real platform analytics
    */
+  /**
+   * Get platform analytics
+   */
   async getPlatformAnalytics() {
     try {
       const response = await fetch(`${API_BASE_URL}/analytics/platform`);
@@ -114,5 +117,38 @@ export const ApiService = {
       console.error('ApiService.getPlatformAnalytics Error:', error);
       throw error;
     }
+  },
+
+  /**
+   * Get User Goals
+   */
+  async getGoals(firebaseUid) {
+    const response = await fetch(`${API_BASE_URL}/goals/${firebaseUid}`);
+    if (!response.ok) throw new Error('Failed to load goals');
+    return await response.json();
+  },
+
+  /**
+   * Create User Goal
+   */
+  async createGoal(payload) {
+    const response = await fetch(`${API_BASE_URL}/goals/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error('Failed to create goal');
+    return await response.json();
+  },
+
+  /**
+   * Complete (soft-delete) Goal
+   */
+  async completeGoal(goalId) {
+    const response = await fetch(`${API_BASE_URL}/goals/${goalId}`, {
+      method: 'DELETE'
+    });
+    if (!response.ok) throw new Error('Failed to complete goal');
+    return true;
   }
 };

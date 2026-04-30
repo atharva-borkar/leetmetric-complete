@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Target, Plus, Check, Flame } from 'lucide-react';
 import { useApp } from '../context/AppContext';
+import { ApiService } from '../services/api';
 import GlassCard from '../components/ui/GlassCard';
 import GlowButton from '../components/ui/GlowButton';
 import toast from 'react-hot-toast';
@@ -21,8 +22,7 @@ export default function Goals() {
   const fetchGoals = async () => {
     if (!currentUser) return;
     try {
-      const res = await fetch(`/api/goals/${currentUser.uid}`);
-      const data = await res.json();
+      const data = await ApiService.getGoals(currentUser.uid);
       setGoals(data);
     } catch (err) {
       toast.error('Failed to load goals');
@@ -38,23 +38,15 @@ export default function Goals() {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/goals/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firebase_uid: currentUser.uid,
-          goal_type: goalType,
-          target_count: Number(targetCount),
-          difficulty: difficulty === 'any' ? null : difficulty,
-        })
+      await ApiService.createGoal({
+        firebase_uid: currentUser.uid,
+        goal_type: goalType,
+        target_count: Number(targetCount),
+        difficulty: difficulty === 'any' ? null : difficulty,
       });
-      if (res.ok) {
-        toast.success('Goal created!');
-        setIsCreating(false);
-        fetchGoals();
-      } else {
-        throw new Error('Failed to create goal');
-      }
+      toast.success('Goal created!');
+      setIsCreating(false);
+      fetchGoals();
     } catch (err) {
       toast.error(err.message);
     }
@@ -62,13 +54,9 @@ export default function Goals() {
 
   const handleComplete = async (goalId) => {
     try {
-      const res = await fetch(`/api/goals/${goalId}`, {
-        method: 'DELETE', // Soft delete = complete
-      });
-      if (res.ok) {
-        toast.success('Goal Completed! Keep up the streak 🔥', { icon: '👏' });
-        fetchGoals();
-      }
+      await ApiService.completeGoal(goalId);
+      toast.success('Goal Completed! Keep up the streak 🔥', { icon: '👏' });
+      fetchGoals();
     } catch (err) {
       toast.error('Could not update goal');
     }
